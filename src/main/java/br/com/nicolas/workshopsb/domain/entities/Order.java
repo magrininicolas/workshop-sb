@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import br.com.nicolas.workshopsb.domain.entities.enums.OrderStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -38,9 +38,29 @@ public class Order implements Serializable {
   private UUID id;
 
   @CreatedDate
+  @Column(name = "order_date")
   private Instant instant;
+
+  private Integer orderStatus;
 
   @ManyToOne
   @JoinColumn(name = "client_id")
   private User client;
+
+  public Order(UUID id, Instant instant, OrderStatus orderStatus, User client) {
+    this.id = id;
+    this.instant = instant;
+    setOrderStatus(orderStatus);
+    this.client = client;
+  }
+
+  public OrderStatus getOrderStatus() {
+    return OrderStatus.valueOf(orderStatus);
+  }
+
+  public void setOrderStatus(OrderStatus orderStatus) {
+    if (orderStatus != null) {
+      this.orderStatus = orderStatus.getCode();
+    }
+  }
 }
